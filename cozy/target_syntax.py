@@ -12,7 +12,7 @@ from cozy.opts import Option
 enforce_estatevar_wf = Option("enforce-well-formed-state-var-boundaries", bool, False)
 
 # Misc
-TRef       = declare_case(Type, "TRef", ["t"])
+TRef       = declare_case(Type, "TRef", ["elem_type"])
 EEnumToInt = declare_case(Exp, "EEnumToInt", ["e"])
 EBoolToInt = declare_case(Exp, "EBoolToInt", ["e"])
 EStm       = declare_case(Exp, "EStm", ["stm", "e"])
@@ -32,7 +32,7 @@ def f(self, e):
 EStateVar.__init__ = f
 
 def EIsSingleton(e):
-    arg = EVar(fresh_name()).with_type(e.type.t)
+    arg = EVar(fresh_name()).with_type(e.type.elem_type)
     return EBinOp(EUnaryOp(UOp.Sum, EMap(e, ELambda(arg, ONE)).with_type(TBag(INT))).with_type(INT), "<=", ONE).with_type(BOOL)
 
 def EDeepEq(e1, e2):
@@ -48,7 +48,7 @@ def EDeepIn(e1, e2):
 def ECountIn(e, collection):
     """Count the number of times e occurs in the collection"""
     from cozy.syntax_tools import free_vars, fresh_var
-    assert e.type == collection.type.t
+    assert e.type == collection.type.elem_type
     arg = fresh_var(e.type, omit=free_vars(e))
     return EUnaryOp(UOp.Length, EFilter(collection, ELambda(arg, EEq(arg, e))).with_type(collection.type)).with_type(INT)
 
@@ -64,14 +64,14 @@ def EArgDistinct(bag, key):
 
 def EForall(e, p):
     from cozy.syntax_tools import mk_lambda
-    return EUnaryOp(UOp.All, EMap(e, mk_lambda(e.type.t, p)).with_type(type(e.type)(BOOL))).with_type(BOOL)
+    return EUnaryOp(UOp.All, EMap(e, mk_lambda(e.type.elem_type, p)).with_type(type(e.type)(BOOL))).with_type(BOOL)
 
 def EDisjoint(xs, ys):
     return EForall(xs, lambda x:
         ENot(EIn(x, ys)))
 
 # Fixed-length vectors
-TVector    = declare_case(Type, "TVector", ["t", "n"])
+TVector    = declare_case(Type, "TVector", ["elem_type", "n"])
 EVectorGet = declare_case(Exp, "EVectorGet", ["e", "i"])
 
 # Misc
