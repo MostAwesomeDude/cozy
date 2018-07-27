@@ -395,7 +395,7 @@ class PrettyPrinter(common.Visitor):
         return "({}).{}".format(self.visit(e.e), e.index)
 
     def visit_ELet(self, e):
-        return "{} {} = {} in {}".format(self.format_keyword("let"), e.f.arg.id, self.visit(e.e), self.visit(e.f.body))
+        return "{} {} = {} in {}".format(self.format_keyword("let"), e.body_function.arg.id, self.visit(e.e), self.visit(e.body_function.body))
 
     def visit_CPull(self, c):
         return "{} {lt}- {}".format(c.id, self.visit(c.e), lt=self.format_lt())
@@ -837,8 +837,8 @@ class FragmentEnumerator(common.Visitor):
         yield self.make_ctx(e)
         t = e.type
         for ctx in self.visit(e.e):
-            yield self.update_repl(ctx, lambda r: lambda x: syntax.ELet(r(x), e.f).with_type(t))
-        for ctx in self.recurse_with_assumptions_about_bound_var(e.f, Exactly(e.e)):
+            yield self.update_repl(ctx, lambda r: lambda x: syntax.ELet(r(x), e.body_function).with_type(t))
+        for ctx in self.recurse_with_assumptions_about_bound_var(e.body_function, Exactly(e.e)):
             yield self.update_repl(ctx, lambda r: lambda x: syntax.ELet(e.e, r(x)).with_type(t))
 
     def visit_ECond(self, e):
@@ -2148,7 +2148,7 @@ class BindingRewriter(BottomUpRewriter):
     """
 
     def visit_ELet(self, e):
-        return push_decl(e.f.arg, e.e, self.visit(e.f.body))
+        return push_decl(e.body_function.arg, e.e, self.visit(e.body_function.body))
 
     def visit_SSeq(self, seq):
         parts = [self.visit(part) for part in break_seq(seq)]
