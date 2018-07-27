@@ -633,7 +633,7 @@ class JavaPrinter(CxxPrinter):
                 ekey = self.visit(e.key)
                 v = self.fv(e.map.type.v, hint="v")
                 with self.boxed_mode():
-                    decl = self.visit(SDecl(v.id, EEscape("{emap}.get({ekey})".format(emap=emap, ekey=ekey), [], []).with_type(e.type)))
+                    decl = self.visit(SDecl(v, EEscape("{emap}.get({ekey})".format(emap=emap, ekey=ekey), [], []).with_type(e.type)))
                 s, e = self.visit(ECond(EEq(v, ENull().with_type(v.type)), evaluation.construct_value(e.map.type.v), v).with_type(e.type))
                 return (smap + skey + decl + s, e)
             else:
