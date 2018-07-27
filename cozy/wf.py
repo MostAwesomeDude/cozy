@@ -1,7 +1,7 @@
 """Well-formedness tests for Cozy expressions."""
 
 from cozy.common import No, typechecked, OrderedSet
-from cozy.syntax import Exp, EVar, EAll, T
+from cozy.syntax import Exp, EVar, EAll, ETRUE
 from cozy.target_syntax import EStateVar
 from cozy.syntax_tools import pprint
 from cozy.solver import ModelCachingSolver
@@ -28,7 +28,7 @@ class ExpIsNotWf(No):
             self.offending_subexpression,
             self.reason)
 
-def exp_wf_nonrecursive(solver, e : Exp, context : Context, pool = RUNTIME_POOL, assumptions : Exp = T):
+def exp_wf_nonrecursive(solver, e : Exp, context : Context, pool = RUNTIME_POOL, assumptions : Exp = ETRUE):
     """Check the well-formedness of `e` but do not recurse into its children.
 
     Returns True or an instance of No explaining why `e` is not well-formed.
@@ -60,7 +60,7 @@ def exp_wf_nonrecursive(solver, e : Exp, context : Context, pool = RUNTIME_POOL,
     return True
 
 @typechecked
-def exp_wf(e : Exp, context : Context, pool = RUNTIME_POOL, assumptions : Exp = T, solver = None):
+def exp_wf(e : Exp, context : Context, pool = RUNTIME_POOL, assumptions : Exp = ETRUE, solver = None):
     """Check the well-formedess of `e`.
 
     Returns True or an instance of ExpIsNotWf that indicates why `e` is not

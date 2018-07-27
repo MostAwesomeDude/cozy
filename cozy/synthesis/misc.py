@@ -1,7 +1,7 @@
 import itertools
 
 from cozy.common import FrozenDict, partition
-from cozy.syntax import T, Exp, Query, TFunc, EVar, EAll, EImplies, EEq, ELambda, Stm, SNoOp, SDecl, SAssign, SSeq, SIf, SForEach, SCall
+from cozy.syntax import ETRUE, Exp, Query, TFunc, EVar, EAll, EImplies, EEq, ELambda, Stm, SNoOp, SDecl, SAssign, SSeq, SIf, SForEach, SCall
 from cozy.target_syntax import TMap, EMakeMap2, EMapGet, SMapPut, SMapDel, SMapUpdate
 from cozy.syntax_tools import fresh_var, free_vars, subst
 from cozy.solver import ModelCachingSolver
@@ -9,7 +9,7 @@ from cozy.logging import task
 
 _qe_cache = { }
 
-def queries_equivalent(q1 : Query, q2 : Query, state_vars : [EVar], extern_funcs : { str : TFunc }, assumptions : Exp = T):
+def queries_equivalent(q1 : Query, q2 : Query, state_vars : [EVar], extern_funcs : { str : TFunc }, assumptions : Exp = ETRUE):
     with task("checking query equivalence", q1=q1.name, q2=q2.name):
         if q1.ret.type != q2.ret.type:
             return False

@@ -40,7 +40,7 @@ EnumeratedExp = namedtuple("EnumeratedExp", [
     "fingerprint",      # Its fingerprint
     ])
 
-LITERALS = (T, F, ZERO, ONE)
+LITERALS = (ETRUE, EFALSE, ZERO, ONE)
 
 def of_type(exps, t):
     for e in exps:
